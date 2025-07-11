@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Coffee Machine</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Coffee Machine</h2>
+
+    <button id="btnWater">Add Water</button>
+    <button id="btnBeans">Add Beans</button>
+    <button id="btnMake">Make Coffee</button>
+    <button id="btnStatus">Check Status</button>
+
+    <p id="output">Loading...</p>
+
+    <!-- Define Module before loading index.js -->
+    <script>
+        var Module = {
+            onRuntimeInitialized: function () {
+                const addWater = Module.cwrap('addWater', 'string', ['number']);
+                const addBeans = Module.cwrap('addBeans', 'string', ['number']);
+                const makeCoffee = Module.cwrap('makeCoffee', 'string', []);
+                const checkStatus = Module.cwrap('checkStatus', 'string', []);
+
+                document.getElementById("output").innerText = "Machine Ready.";
+
+                document.getElementById("btnWater").onclick = () => {
+                    document.getElementById("output").innerText = addWater(500);
+                };
+                document.getElementById("btnBeans").onclick = () => {
+                    document.getElementById("output").innerText = addBeans(30);
+                };
+                document.getElementById("btnMake").onclick = () => {
+                    document.getElementById("output").innerText = makeCoffee();
+                };
+                document.getElementById("btnStatus").onclick = () => {
+                    document.getElementById("output").innerText = checkStatus();
+                };
+            }
+        };
+    </script>
+
+    <!-- Load the compiled Emscripten JS *after* defining Module -->
+    <script src="index.js"></script>
+</body>
+
+</html>
