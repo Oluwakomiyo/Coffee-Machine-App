@@ -116,17 +116,25 @@
                     document.getElementById("output").innerText = addBeans(30);
                 };
                 document.getElementById("btnMake").onclick = () => {
-                    document.getElementById("coffee-animation").style.opacity = 1;
-                    document.getElementById("progress-bar").style.width = "100%";
-                    document.getElementById("brew-sound").play();
+                    const result = brew().trim();  // Call brew and trim the result
+                    document.getElementById("output").innerText = result;
 
-                    setTimeout(() => {
-                        const result = brew();
-                        document.getElementById("output").innerText = result;
+                    if (result === "☕ Coffee made!") {
+                        document.getElementById("coffee-animation").style.opacity = 1;
+                        document.getElementById("progress-bar").style.width = "100%";
+                        document.getElementById("brew-sound").play();
+
+                        setTimeout(() => {
+                            document.getElementById("coffee-animation").style.opacity = 0;
+                            document.getElementById("progress-bar").style.width = "0%";
+                        }, 2000);
+                    } else {
+                        // No animation if resources are insufficient
                         document.getElementById("coffee-animation").style.opacity = 0;
                         document.getElementById("progress-bar").style.width = "0%";
-                    }, 2000);
+                    }
                 };
+
                 document.getElementById("btnStatus").onclick = () => {
                     document.getElementById("output").innerText = checkStatus();
                 };

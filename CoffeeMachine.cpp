@@ -61,7 +61,7 @@ extern "C"
             {
                 waterLevel -= 150;
                 beanLevel -= 10;
-                return "☕ coffee made (efficient mode).";
+                return "☕ Coffee made!";
             }
             else
             {
