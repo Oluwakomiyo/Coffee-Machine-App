@@ -1,43 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coffee Machine</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
+            text-align: center;
             padding: 20px;
+            background-color: #f7f3f0;
+            color: #4b3832;
+        }
+
+        h1 {
+            color: #6b4c35;
         }
 
         button {
-            margin: 5px;
-            padding: 10px 15px;
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6b4c35;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4b3832;
         }
 
         #output {
             margin-top: 20px;
-            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .coffee-animation {
+            font-size: 40px;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .steam {
+            animation: steam-rise 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes steam-rise {
+            0% {
+                transform: translateY(0);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #ddd;
+            border-radius: 20px;
+            margin-top: 15px;
+            overflow: hidden;
+            height: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #6b4c35;
+            transition: width 2s;
         }
     </style>
 </head>
 
 <body>
-    <h2>Coffee Machine</h2>
-
+    <h1>Coffee Machine</h1>
     <button id="btnWater">Add Water</button>
     <button id="btnBeans">Add Beans</button>
-    <button id="btnMake">Make Coffee</button>
+    <button id="btnMake">Brew</button>
     <button id="btnStatus">Check Status</button>
 
-    <p id="output">Loading...</p>
+    <div class="coffee-animation" id="coffee-animation">
+        ☕ <span class="steam">💨</span>
+    </div>
 
-    <!-- Define Module before loading index.js -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="output">Loading...</div>
+
+    <audio id="brew-sound" src="brew.mp3" preload="auto"></audio>
+
     <script>
         var Module = {
             onRuntimeInitialized: function () {
                 const addWater = Module.cwrap('addWater', 'string', ['number']);
                 const addBeans = Module.cwrap('addBeans', 'string', ['number']);
-                const makeCoffee = Module.cwrap('makeCoffee', 'string', []);
+                const brew = Module.cwrap('brew', 'string', []);
                 const checkStatus = Module.cwrap('checkStatus', 'string', []);
 
                 document.getElementById("output").innerText = "Machine Ready.";
@@ -49,16 +116,23 @@
                     document.getElementById("output").innerText = addBeans(30);
                 };
                 document.getElementById("btnMake").onclick = () => {
-                    document.getElementById("output").innerText = makeCoffee();
+                    document.getElementById("coffee-animation").style.opacity = 1;
+                    document.getElementById("progress-bar").style.width = "100%";
+                    document.getElementById("brew-sound").play();
+
+                    setTimeout(() => {
+                        const result = brew();
+                        document.getElementById("output").innerText = result;
+                        document.getElementById("coffee-animation").style.opacity = 0;
+                        document.getElementById("progress-bar").style.width = "0%";
+                    }, 2000);
                 };
                 document.getElementById("btnStatus").onclick = () => {
                     document.getElementById("output").innerText = checkStatus();
                 };
-            }
+            },
         };
     </script>
-
-    <!-- Load the compiled Emscripten JS *after* defining Module -->
     <script src="index.js"></script>
 </body>
 

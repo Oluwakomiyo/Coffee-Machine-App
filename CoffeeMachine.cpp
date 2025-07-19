@@ -4,7 +4,7 @@
 extern "C"
 {
 
-    // === 1. Base Class: CoffeeMachine (Encapsulation, Abstraction, Constructor, Destructor) ===
+    // === 1. Base Class: CoffeeMachine ===
     class CoffeeMachine
     {
     protected:
@@ -27,7 +27,7 @@ extern "C"
             return "Added " + std::to_string(grams) + "g beans.";
         }
 
-        virtual std::string makeCoffee()
+        virtual std::string brew()
         {
             if (waterLevel >= 200 && beanLevel >= 15)
             {
@@ -49,31 +49,31 @@ extern "C"
         }
     };
 
-    // === 2. Derived Class: SmartCoffeeMachine (Inheritance, Polymorphism) ===
+    // === 2. Derived Class: SmartCoffeeMachine ===
     class SmartCoffeeMachine : public CoffeeMachine
     {
     public:
         SmartCoffeeMachine() : CoffeeMachine() {}
 
-        std::string makeCoffee() override
+        std::string brew() override
         {
             if (waterLevel >= 150 && beanLevel >= 10)
             {
                 waterLevel -= 150;
                 beanLevel -= 10;
-                return "☕ Smart coffee made (efficient mode).";
+                return "☕ coffee made (efficient mode).";
             }
             else
             {
-                return "Smart machine needs more resources.";
+                return "Machine needs more resources.";
             }
         }
     };
 
-    // === 3. Instantiating Polymorphic Object ===
+    // === 3. Polymorphic Object ===
     CoffeeMachine *machine = new SmartCoffeeMachine();
 
-    // === 4. Exposing C++ methods to JavaScript ===
+    // === 4. Exposed Methods ===
     const char *addWater(int ml)
     {
         static std::string result;
@@ -88,10 +88,10 @@ extern "C"
         return result.c_str();
     }
 
-    const char *makeCoffee()
+    const char *brew()
     {
         static std::string result;
-        result = machine->makeCoffee();
+        result = machine->brew();
         return result.c_str();
     }
 
